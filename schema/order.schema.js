@@ -12,11 +12,6 @@ const orderSchema =new Schema({
         ref:'course',
         required:true
     },
-    payed:{
-        type:Number,
-        required:true,
-        default:0
-    },
     amount:{
         type:Number,
         required:true

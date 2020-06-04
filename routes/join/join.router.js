@@ -54,4 +54,15 @@ Router.put("/update-progress-lesson-of-course/:idUser/:idCourse/:idLesson",funct
     });
 });
 
+Router.get("/get-total-student-join-course/:idCourse",async function(req,res,next){
+    try{
+        let total = await joinController.getTotalStudentJoinCourse(req.params.idCourse);
+        res.status(200).send(total);
+    }catch(err){
+        console.log(err);
+        res.status(500).send({message:"Lỗi Server"});
+    }
+});
+
+
 module.exports=Router;

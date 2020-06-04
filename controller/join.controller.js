@@ -1,6 +1,7 @@
 var joinSchema = require('../schema/join.schema');
 var lessonProgressSchema = require('../schema/lessonProgress.schema');
 var lessonSchema = require('../schema/lesson.schema');
+var mongoose = require("mongoose");
 
 function isJoined(idUser,idCourse){
     return new Promise((resolve,reject)=>{
@@ -131,8 +132,27 @@ async function updateProgressLesson(idUser,idCourse,idLesson,data){
     
 }
 
-function getProgressOfCourse(){
-    return new Promise((resolve,reject))
+async function getTotalStudentJoinCourse(idCourse){
+    try{
+        let total = await joinSchema.aggregate([
+            {
+                $match:{
+                    "idCourse":mongoose.Types.ObjectId(idCourse)
+                }
+            },
+            {
+                $group:{
+                    _id:null,
+                    "Total":{
+                        $sum:1
+                    }
+                }
+            }
+        ]);
+        return total;
+    }catch(err){
+        throw new Error(err);
+    }
 }
 
 module.exports = {
@@ -141,5 +161,6 @@ module.exports = {
     getJoinCourseById:getJoinCourseById,
     updateJoin:updateJoin,
     deleteJoin:deleteJoin,
-    updateProgressLesson:updateProgressLesson
+    updateProgressLesson:updateProgressLesson,
+    getTotalStudentJoinCourse:getTotalStudentJoinCourse
 }

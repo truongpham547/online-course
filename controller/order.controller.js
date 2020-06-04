@@ -1,15 +1,16 @@
 var orderSchema = require("../schema/order.schema");
 const fs=require('fs');
 const path = require('path');
+const mongoose = require("mongoose");
 
 async function createOrder(reqData) {
     try {
         var order = new orderSchema();
         order.idUser= reqData.idUser;
         order.idCourse = reqData.idCourse;
-        order.payed=1;
         order.amount=reqData.amount;
-        order.save();
+        let newOrder = await order.save();
+        return newOrder;
     } catch (error) {
         throw new Error(error);
     }
@@ -35,8 +36,34 @@ async function getOrderByIdUserAndIdCourse(idUser,idCourse){
     }
 }
 
+async function getTotalRevenue(idCourse){
+    try{
+        let total = await orderSchema.aggregate([
+            {
+                $match:{
+                    "idCourse":mongoose.Types.ObjectId(idCourse)
+                }
+            },
+            {
+                $group:{
+                    _id:null,
+                    "Total":{
+                        $sum:"$amount"
+                    }
+                }
+            }
+        ]);
+        return total;
+    }catch(err){
+        throw new Error(err);
+    }
+}
+
+
+
 module.exports = {
     createOrder:createOrder,
     getListCourseOrdered:getListCourseOrdered,
-    getOrderByIdUserAndIdCourse:getOrderByIdUserAndIdCourse
+    getOrderByIdUserAndIdCourse:getOrderByIdUserAndIdCourse,
+    getTotalRevenue:getTotalRevenue
 }
