@@ -15,12 +15,19 @@ Router.get("/get-payment-public-key",async(req,res,next)=>{
 Router.post("/pay", async (req, res) => {
     try {
 
-        var courseDetail = courseController.getbyId(req.body.idCourse);
-        
-        var mustPay = courseDetail.price-((courseDetail.price*courseDetail.discount)/100);
-        if(req.body.amount!=mustPay){
-            res.status(400).send({"message":"Số tiền không hợp lệ"});
+        var totalAmount=0;
+        for(let i=0 ; i<req.body.cart.length;i++){
+            var courseDetail = await courseController.getbyId(req.body.cart[i].idCourse);
+            
+            var mustPay = courseDetail.price-((courseDetail.price*courseDetail.discount)/100);
+            
+            if(req.body.cart[i].amount!=mustPay){
+                res.status(400).send({"message":"Số tiền không hợp lệ"});
+            }
+            totalAmount=totalAmount+mustPay;
         }
+
+
 
         stripe.customers
             .create({
@@ -30,24 +37,25 @@ Router.post("/pay", async (req, res) => {
             })
             .then(customer =>{
                 stripe.charges.create({
-                    amount: req.body.amount,
-                    currency: "usd",
+                    amount: totalAmount,
+                    currency: "vnd",
                     customer: customer.id
                 })
             })
             .then(async() => {
                 try{
-                    await orderController.createOrder({
-                        "idUser":req.body.idUser,
-                        "idCourse":req.body.idCourse,
-                        "amount":req.body.amount
-                    });
+                    for(let i=0;i<req.body.cart.length;i++){
+                        await orderController.createOrder({
+                            "idUser":req.body.idUser,
+                            "idCourse":req.body.cart[i].idCourse,
+                            "amount":req.body.cart[i].amount
+                        });
 
-                    await joinController.joinCourse({
-                        "idUser":req.body.idUser,
-                        "idCourse":req.body.idCourse
-                    });
-
+                        await joinController.joinCourse({
+                            "idUser":req.body.idUser,
+                            "idCourse":req.body.cart[i].idCourse
+                        });
+                    }
                     res.status(200).send({"message":"payment success"});
                 }catch(err){
                     res.status(500).send({"message":"Lỗi server"});
