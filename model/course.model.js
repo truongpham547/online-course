@@ -158,8 +158,7 @@ function getbyId(id) {
   return new Promise((resolve, reject) => {
     courseSchema
       .findOne({ _id: id })
-      .populate("idUser", "name")
-      .populate("category", "name")
+
       .then((course) => {
         return resolve(course);
       })

@@ -32,16 +32,31 @@ Router.post("/pay", async (req, res) => {
 
         var totalAmount=0;
         for(let i=0 ; i<req.body.cart.length;i++){
+            console.log(req.body.cart[i].idCourse);
+
             var courseDetail = await courseController.getbyId(req.body.cart[i].idCourse);
-            
+            console.log(courseDetail);
             var mustPay = courseDetail.price-((courseDetail.price*courseDetail.discount)/100);
-            
-            if(req.body.cart[i].amount!=mustPay){
+            mustPay = Math.round(mustPay);
+            if(Math.round( req.body.cart[i].amount) !=mustPay){
                 res.status(400).send({"message":"Số tiền không hợp lệ"});
             }
             totalAmount=totalAmount+mustPay;
         }
 
+
+        for(let i=0;i<req.body.cart.length;i++){
+            await orderController.createOrder({
+                "idUser":req.body.idUser,
+                "idCourse":req.body.cart[i].idCourse,
+                "amount":Math.round(req.body.cart[i].amount)
+            });
+
+            await joinController.joinCourse({
+                "idUser":req.body.idUser,
+                "idCourse":req.body.cart[i].idCourse
+            });
+        }
 
 
         stripe.customers
@@ -51,6 +66,7 @@ Router.post("/pay", async (req, res) => {
                 source: req.body.stripeToken
             })
             .then(customer =>{
+                console.log('sadf;lsd;fk1');
                 stripe.charges.create({
                     amount: totalAmount,
                     currency: "vnd",
@@ -58,19 +74,9 @@ Router.post("/pay", async (req, res) => {
                 })
             })
             .then(async() => {
+                console.log('sdklfd;lkgd;f2');
                 try{
-                    for(let i=0;i<req.body.cart.length;i++){
-                        await orderController.createOrder({
-                            "idUser":req.body.idUser,
-                            "idCourse":req.body.cart[i].idCourse,
-                            "amount":req.body.cart[i].amount
-                        });
 
-                        await joinController.joinCourse({
-                            "idUser":req.body.idUser,
-                            "idCourse":req.body.cart[i].idCourse
-                        });
-                    }
                     res.status(200).send({"message":"payment success"});
                 }catch(err){
                     res.status(500).send({"message":"Lỗi server"});
@@ -78,7 +84,8 @@ Router.post("/pay", async (req, res) => {
             })
             .catch(err => console.log(err));
     } catch (err) {
-      res.send(err);
+        console.log('err',err);
+      res.status(500).send(err);
     }
 });
 
