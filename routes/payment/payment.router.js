@@ -12,6 +12,21 @@ Router.get("/get-payment-public-key",async(req,res,next)=>{
     res.status(200).send({key:PUBLIC_KEY_PAYMENT});
 });
 
+Router.get("/secret", async(req,res,next)=>{
+    try{
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: 1099,
+            currency: 'vnd',
+            metadata: {integration_check: 'accept_a_payment'},
+        });
+        res.status(200).send({client_secret: paymentIntent.client_secret});
+    }catch(err){
+        console.log(err);
+        res.status(500).send({"message":"server error"});
+    }
+
+});
+
 Router.post("/pay", async (req, res) => {
     try {
 
