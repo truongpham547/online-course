@@ -14,8 +14,7 @@ const commentSchema =new Schema({
     },
     idLesson:{
         type:Schema.Types.ObjectId,
-        ref:'course',
-        required:true
+        ref:'lesson'
     },
     content:{
         type:String,
@@ -34,6 +33,10 @@ const commentSchema =new Schema({
         type: Date,
         default: Date.now()
     },
+    pageType:{
+        type:String,
+        required:true
+    }
 });
 
 const comments = mongoose.model("comments",commentSchema);

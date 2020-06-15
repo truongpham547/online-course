@@ -390,4 +390,22 @@ Router.delete('/delete-a-popup-question/:idLesson/:idPopupQuestion',verifyToken,
   })
 });
 
+Router.get('/get-multiple-choice-for-test/:idLesson',function(req,res,next){
+  lessonController.getMultipleChoiceForTest(req.params.idLesson).then(multipleChoice=>{
+    return res.status(200).send(multipleChoice);
+  }).catch(err=>{
+    console.log(err);
+    return res.status(500).send({"message":"Lỗi server"});
+  })
+});
+
+Router.post('/submit-test',function(req,res,next){
+  lessonController.checkTest(req.body).then(result=>{
+    return res.status(200).send(result);
+  }).catch(err=>{
+    console.log(err);
+    return res.status(500).send({"message":"Lỗi server"});
+  })
+});
+
 module.exports = Router;

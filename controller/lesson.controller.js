@@ -299,12 +299,72 @@ function deletePopupQuestion(idLesson,idPopupQuestion){
     })
 }
 
-
-function updatePercentLearn(){
-    return new Promise((resolve,reject)=>{
-        
-    })
+async function getMultipleChoiceOfLesson(idLesson){
+    try{
+        var lesson= await lessonSchema.findOne({_id:idLesson});
+        return lesson;
+    }catch(error){
+        throw new Error(error);
+    }
+    
 }
+
+async function getMultipleChoiceForTest(idLesson){
+    try {
+        var mul= await lessonSchema.find({_id:idLesson}).select('multipleChoices.A multipleChoices.B multipleChoices.C multipleChoices.D multipleChoices.question multipleChoices.image multipleChoices._id');
+        return mul;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
+async function checkTest(reqData){
+    try {        
+        var lessonInfo= await lessonSchema.findOne({_id:reqData.idLesson});
+        var userTest=reqData.test;
+
+        var multipleChoices = lessonInfo.multipleChoices;
+        console.log(multipleChoices);
+        console.log(userTest);
+
+        var resultMul = Array();
+        var totalRight=0;
+        var totalWrong=0;
+        for(let i=0;i<userTest.length;i++){
+            multipleChoices.find((mul)=>{
+                if(mul._id==userTest[i]._id){
+                    if(mul.answer.toLowerCase()== userTest[i].answer.toLowerCase()){
+                        resultMul.push({
+                            "_id":userTest[i]._id,
+                            "userAnswer":userTest[i].answer,
+                            "sysAnswer":mul.answer,
+                            "result":true
+                        });
+                        totalRight+=1;
+                    }else{
+                        resultMul.push({
+                            "_id":userTest[i]._id,
+                            "userAnswer":userTest[i].answer,
+                            "sysAnswer":mul.answer,
+                            "result":false
+                        });
+                        totalWrong+=1;
+                    }
+                }
+            });
+        }
+        var result={
+            "multipleChoices":resultMul,
+            "totalRight":totalRight,
+            "totalWrong":totalWrong
+        };
+        return result;
+        
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 
 module.exports={
     createLesson:createLesson,
@@ -321,5 +381,8 @@ module.exports={
     deleteImageMultipleChoice:deleteImageMultipleChoice,
     addListPopupQuestion:addListPopupQuestion,
     deletePopupQuestion:deletePopupQuestion,
-    addMoreListMultipleChoice:addMoreListMultipleChoice
+    addMoreListMultipleChoice:addMoreListMultipleChoice,
+    getMultipleChoiceOfLesson:getMultipleChoiceOfLesson,
+    getMultipleChoiceForTest:getMultipleChoiceForTest,
+    checkTest:checkTest
 }

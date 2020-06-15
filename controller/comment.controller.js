@@ -2,9 +2,9 @@ var commentSchema = require("../schema/comment.schema");
 const fs=require('fs');
 const path = require('path');
 
-async function getParentComment(idCourse,idLesson,skip,limit) {
+async function getParentComment(idCourse,idLesson,skip,limit,pageType="lesson") {
     try {
-        var comments = await commentSchema.find({idCourse:idCourse,idLesson:idLesson,idParent:null})
+        var comments = await commentSchema.find({idCourse:idCourse,idLesson:idLesson,idParent:null,pageType:pageType})
             .populate("idUser",["email","name","image"],"users")
             .limit(parseInt(limit))
             .skip(parseInt(skip));
@@ -47,7 +47,7 @@ async function getChildCommentById(idParent){
     }
 }
 
-async function addComment(reqData,image){
+async function addComment(reqData,image,pageType="lesson"){
     try {
         var comment =new commentSchema();
         if(image!=undefined){
@@ -62,6 +62,7 @@ async function addComment(reqData,image){
         comment.content = reqData.content;
         comment.idUser=reqData.idUser;
         comment.idLesson = reqData.idLesson;
+        comment.pageType=pageType;
         let newComment = await comment.save();
         return newComment;
     } catch (error) {

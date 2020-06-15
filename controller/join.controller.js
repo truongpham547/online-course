@@ -40,11 +40,7 @@ function joinCourse(userData) {
 
 function getCoursesJoinedByIdUser(idUser){
     return new Promise((resolve,reject)=>{
-        joinSchema.find({idUser:idUser})
-        .populate({
-            path: 'courses',
-            select:'name'
-        })         
+        joinSchema.find({idUser:idUser}) 
         .populate("idCourse",["name","image"],"courses") 
         .then(joins=>{
             return resolve(joins);

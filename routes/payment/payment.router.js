@@ -30,59 +30,69 @@ Router.get("/secret", async(req,res,next)=>{
 Router.post("/pay", async (req, res) => {
     try {
 
-        var totalAmount=0;
-        for(let i=0 ; i<req.body.cart.length;i++){
-            console.log(req.body.cart[i].idCourse);
+        // var totalAmount=0;
+        // for(let i=0 ; i<req.body.cart.length;i++){
+        //     console.log(req.body.cart[i].idCourse);
 
-            var courseDetail = await courseController.getbyId(req.body.cart[i].idCourse);
-            console.log(courseDetail);
-            var mustPay = courseDetail.price-((courseDetail.price*courseDetail.discount)/100);
-            mustPay = Math.round(mustPay);
-            if(Math.round( req.body.cart[i].amount) !=mustPay){
-                res.status(400).send({"message":"Số tiền không hợp lệ"});
-            }
-            totalAmount=totalAmount+mustPay;
-        }
-
-
-        for(let i=0;i<req.body.cart.length;i++){
-            await orderController.createOrder({
-                "idUser":req.body.idUser,
-                "idCourse":req.body.cart[i].idCourse,
-                "amount":Math.round(req.body.cart[i].amount)
-            });
-
-            await joinController.joinCourse({
-                "idUser":req.body.idUser,
-                "idCourse":req.body.cart[i].idCourse
-            });
-        }
+        //     var courseDetail = await courseController.getbyId(req.body.cart[i].idCourse);
+        //     console.log(courseDetail);
+        //     var mustPay = courseDetail.price-((courseDetail.price*courseDetail.discount)/100);
+        //     mustPay = Math.round(mustPay);
+        //     if(Math.round( req.body.cart[i].amount) !=mustPay){
+        //         res.status(400).send({"message":"Số tiền không hợp lệ"});
+        //     }
+        //     totalAmount=totalAmount+mustPay;
+        // }
 
 
-        stripe.customers
-            .create({
-                name: req.body.name,
-                email: req.body.email,
-                source: req.body.stripeToken
-            })
-            .then(customer =>{
-                console.log('sadf;lsd;fk1');
-                stripe.charges.create({
-                    amount: totalAmount,
-                    currency: "vnd",
-                    customer: customer.id
-                })
-            })
-            .then(async() => {
-                console.log('sdklfd;lkgd;f2');
-                try{
+        // for(let i=0;i<req.body.cart.length;i++){
+        //     await orderController.createOrder({
+        //         "idUser":req.body.idUser,
+        //         "idCourse":req.body.cart[i].idCourse,
+        //         "amount":Math.round(req.body.cart[i].amount)
+        //     });
 
-                    res.status(200).send({"message":"payment success"});
-                }catch(err){
-                    res.status(500).send({"message":"Lỗi server"});
-                }
-            })
-            .catch(err => console.log(err));
+        //     await joinController.joinCourse({
+        //         "idUser":req.body.idUser,
+        //         "idCourse":req.body.cart[i].idCourse
+        //     });
+        // }
+
+
+        // stripe.customers
+        //     .create({
+        //         name: req.body.name,
+        //         email: req.body.email,
+        //         source: req.body.stripeToken
+        //     })
+        //     .then(customer =>{
+        //         console.log('sadf;lsd;fk1');
+        //         stripe.charges.create({
+        //             amount: totalAmount,
+        //             currency: "vnd",
+        //             customer: customer.id
+        //         })
+        //     })
+        //     .then(async() => {
+        //         console.log('sdklfd;lkgd;f2');
+        //         try{
+
+        //             res.status(200).send({"message":"payment success"});
+        //         }catch(err){
+        //             res.status(500).send({"message":"Lỗi server"});
+        //         }
+        //     })
+        //     .catch(err => console.log(err));
+
+        stripe.charges.create({
+            amount:9000,
+            source:req.body.stripeTokenId,
+            currency:'usd'
+        }).then(()=>{
+            console.log('paySuccess');
+        }).catch(()=>{
+            console.log('pay false');
+        })
     } catch (err) {
         console.log('err',err);
       res.status(500).send(err);

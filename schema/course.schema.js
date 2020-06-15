@@ -49,6 +49,10 @@ const courseSchema = new Schema({
       type: Number,
       default: 0,
     },
+    idUserVote:{
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+    }
   },
   ranking: {
     type: Number,

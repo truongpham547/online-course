@@ -1,15 +1,18 @@
-var categoryModel = require("../model/category.model");
 const fs=require('fs');
 const path = require('path');
+var categorySchema = require('../schema/category.schema');
 
 function addCategory(userData,image) {
   return new Promise((resolve, reject) => {
-    categoryModel.isExist(userData.name).then(result=>{
+    categorySchema.findOne({name:userData.name}).then(result=>{
         if(result){
             return resolve({status:false,"message":"Danh mục đã tồn tại"});
         }else{
-            categoryModel.addCategory(userData.name,image).then(newCategory=>{
-                return resolve({status:true,category:newCategory});
+            let category = new categorySchema();
+            category.name = userData.name;
+            category.image=image;
+            category.save().then(newCategory=>{
+                return resolve(newCategory);
             }).catch(err=>{
                 return reject(err);
             })
@@ -17,12 +20,13 @@ function addCategory(userData,image) {
     }).catch(err=>{
         return reject(err);
     })
+
   });
 }
 
 function getCategory(id){
     return new Promise((resolve,reject)=>{
-        categoryModel.get(id).then(category=>{
+        categorySchema.findOne({_id:id}).then(category=>{
             return resolve(category);
         }).catch(err=>{
             return reject(err);
@@ -32,7 +36,7 @@ function getCategory(id){
 
 function getCategories(){
     return new Promise((resolve,reject)=>{
-        categoryModel.gets().then(categories=>{
+        categorySchema.find().then(categories=>{
             return resolve(categories);
         }).catch(err=>{
             return reject(err);
@@ -42,18 +46,19 @@ function getCategories(){
 
 function deleteCategory(id){
     return new Promise((resolve,reject)=>{
-        categoryModel.get(id).then(category=>{
+        categorySchema.findOne({_id:id}).then(category=>{
             fs.unlink(path.join(__dirname, '../public/upload/category/')+category.image,(err)=>{
                 console.log(err);
             });
-            categoryModel.deleteCategory(id).then(categoryDeleted=>{
-                return resolve(categoryDeleted);
+            categorySchema.deleteOne({_id:id}).then(deletedCategory=>{
+                return resolve(deletedCategory);
             }).catch(err=>{
                 return reject(err);
             })
         }).catch(err=>{
-    
-        });
+            return reject(err);
+        })
+
     })
 }
 
@@ -63,7 +68,7 @@ function updateCategory(id,userData,image){
             if(result){
                 return resolve({status:false,message:"danh mục đã tồn tại"});
             }else{
-                categoryModel.updateCategory(id,userData.name,image).then(newCategory=>{
+                categorySchema.findOneAndUpdate({_id:id},{name:userData.name,image:image},{new:true}).then(newCategory=>{
                     return resolve({status:true,category:newCategory});
                 }).catch(err=>{
                     return reject(err);

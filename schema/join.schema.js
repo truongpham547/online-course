@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const users = require("./user.schema");
+const courses = require("./course.schema")
 
 const joinSchema =new Schema({
     idUser:{
@@ -9,7 +11,7 @@ const joinSchema =new Schema({
     },
     idCourse:{
         type:Schema.Types.ObjectId,
-        ref:'course',
+        ref:'courses',
         required:true
     },
     percentCompleted:{
