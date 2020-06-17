@@ -151,6 +151,15 @@ async function getTotalStudentJoinCourse(idCourse){
     }
 }
 
+async function getCourseProgressJoinByIdUser(idCourse,idUser){
+    try {
+        let joinDetail = await joinSchema.findOne({idCourse:idCourse,idUser:idUser});
+        return joinDetail;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 module.exports = {
     joinCourse:joinCourse,
     getCoursesJoinedByIdUser:getCoursesJoinedByIdUser,
@@ -158,5 +167,6 @@ module.exports = {
     updateJoin:updateJoin,
     deleteJoin:deleteJoin,
     updateProgressLesson:updateProgressLesson,
-    getTotalStudentJoinCourse:getTotalStudentJoinCourse
+    getTotalStudentJoinCourse:getTotalStudentJoinCourse,
+    getCourseProgressJoinByIdUser:getCourseProgressJoinByIdUser
 }

@@ -60,14 +60,5 @@ Router.post("/add-comment",upload.single("image"),async(req,res,next)=>{
     }
 });
 
-Router.post("/rate-course/:idCourse",async(req,res,next)=>{
-  try{
-      
-      return res.status(200).send(newComment);
-  }catch(error){
-      console.log(error);
-      res.status(200).send({"message":"Lỗi server"});
-  }
-  
-});
+
 module.exports = Router;

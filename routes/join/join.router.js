@@ -61,5 +61,14 @@ Router.get("/get-total-student-join-course/:idCourse",async function(req,res,nex
     }
 });
 
+Router.get("/get-progress-course-join-by-idUser-and-idCourse/:idUser/:idCourse",async function (req, res, next) {
+    try{
+      var joinDetail = await joinController.getCourseProgressJoinByIdUser(req.params.idCourse,req.params.idUser);
+      res.status(200).send(joinDetail);
+    }catch(err){
+      res.status(500).send({"message":"Lỗi server"});
+    } 
+});
+
 
 module.exports=Router;

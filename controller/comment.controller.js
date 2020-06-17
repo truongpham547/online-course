@@ -72,6 +72,7 @@ async function addComment(reqData,image,pageType="lesson"){
 
 
 
+
 module.exports = {
     getParentComment:getParentComment,
     addComment:addComment,

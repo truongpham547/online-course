@@ -152,5 +152,17 @@ Router.get("/search-course/:str",async function (req, res, next) {
 });
 
 
+Router.put("/rate-course/:idCourse",async(req,res,next)=>{
+  try{
+    let result = CourseController.rateCourse(req.params.idCourse,req.body);
+    return res.status(200).send(result);
+  }catch(error){
+    console.log(error);
+    res.status(200).send({"message":"Lỗi server"});
+  }
+});
+
+
+
 
 module.exports = Router;

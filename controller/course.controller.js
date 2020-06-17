@@ -2,6 +2,7 @@ const course = require("../schema/course.schema");
 var courseModel = require("../model/course.model");
 const fs = require("fs");
 var path = require("path");
+const courses = require("../schema/course.schema");
 
 function createCourse(data) {
   return new Promise((resolve, reject) => {
@@ -154,6 +155,47 @@ async function searchCourse(str){
   }
 }
 
+async function rateCourse(idCourse,dataUser){
+  try{
+      var courseDetail = await course.findOne({_id:idCourse});
+      var totalVote = courseDetail.vote.totalVote;
+      var EVGVote = courseDetail.vote.EVGVote;
+      var idUserVote = courseDetail.vote.idUserVote;
+
+      
+      if(idUserVote.includes(dataUser.idUser)){
+        return {"status":false,"message":"user voted"};
+      }
+
+      let totalStar =EVGVote*totalVote;
+      let newEVGVote = (totalStar+dataUser.numStar)/(totalVote+1);
+      var test=[];
+      console.log(idUserVote.push(dataUser.idUser));
+      test.push("asdasd");
+      await course.findOneAndUpdate(
+        { "_id": idCourse},
+        { 
+            "$set": {
+                "vote.totalVote": totalVote+1,
+                "vote.EVGVote":newEVGVote
+                // "vote.idUserVote":test
+            },
+        },
+        {upsert: true},
+        function(err,doc) {
+          if(err){
+            console.log(err);
+            throw new Error(err);
+          }
+          return doc;
+        }
+    );
+
+  }catch(error){
+      throw new Error(error);
+  }
+}
+
 module.exports = {
   createCourse: createCourse,
   deleteCourse: deleteCourse,
@@ -165,5 +207,6 @@ module.exports = {
   gettop: gettop,
   getbyId: getbyId,
   permitCourse: permitCourse,
-  searchCourse:searchCourse
+  searchCourse:searchCourse,
+  rateCourse:rateCourse
 };
