@@ -12,7 +12,7 @@ function addCategory(userData,image) {
             category.name = userData.name;
             category.image=image;
             category.save().then(newCategory=>{
-                return resolve(newCategory);
+                return resolve({status:true,"category":newCategory});
             }).catch(err=>{
                 return reject(err);
             })
