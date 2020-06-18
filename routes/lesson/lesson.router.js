@@ -5,8 +5,8 @@ const { check, validationResult,body } = require('express-validator');
 const fs=require('fs');
 const path= require('path');
 var verifyToken = require("../../middleware/verifyToken");
-
-
+var checkIsOwnerOfLesson = require("../../config/checkIsOwnerOfLesson");
+var checkIsOwnerOfCourse = require("../../config/checkIsOwnerOfCourse");
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/upload/lesson')
@@ -82,7 +82,8 @@ Router.post('/create-lesson',[verifyToken,cpUpload,validateLesson],function (req
 });
 
 
-Router.get('/get-lesson-by-id-course/:idCourse', function (req, res, next) {
+Router.get('/get-lesson-by-id-course/:idCourse', async function (req, res, next) {
+  // var isOwner= await checkIsOwnerOfCourse(req.user.id,req.params.idCourse);
   lessonController.getLessonByCourseId(req.params.idCourse).then(lessons=>{
     res.status(200).send(lessons);
   }).catch(err=>{
@@ -267,8 +268,11 @@ Router.put('/add-more-list-multiple-choice/:idLesson',[verifyToken,validateListM
 });
 
 
-Router.get('/get-lesson-by-id/:idLesson',verifyToken,function (req, res, next) {
-  lessonController.getLessonById(req.params.idLesson).then(lesson=>{
+Router.get('/get-lesson-by-id/:idLesson',verifyToken,async function (req, res, next) {
+
+  var isOwner=await checkIsOwnerOfLesson(req.user.id,req.params.idLesson);
+
+  lessonController.getLessonById(req.params.idLesson,isOwner).then(lesson=>{
     res.status(200).send(lesson);
   }).catch(err=>{
     console.log(err);

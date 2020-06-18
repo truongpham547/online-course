@@ -20,7 +20,7 @@ function createLesson(docs,video,data){
 
 function getLessonByCourseId(idCourse){
     return new Promise((resolve,reject)=>{
-        lessonSchema.find({idCourse:idCourse}).sort({order:1}).then(lesson=>{
+        lessonSchema.find({idCourse:idCourse}).select('-multipleChoices.answer').sort({order:1}).then(lesson=>{
             return resolve(lesson);
         }).catch(err=>{
             return reject(err);
@@ -212,14 +212,17 @@ function addMoreListMultipleChoice(idLesson,multipleChoice){
     })
 }
 
-function getLessonById(idLesson){
-    return new Promise((resolve,reject)=>{
-        lessonSchema.findOne({_id: idLesson}).then(result=>{
-            resolve(result);
-        }).catch(err=>{
-            reject(err);
-        });
-    })
+async function getLessonById(idLesson,isOwner){
+    try {
+        if(isOwner){
+            var result = await lessonSchema.findOne({_id: idLesson});
+        }else{
+            var result = await lessonSchema.findOne({_id: idLesson}).select('-multipleChoices.answer');
+        }
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
 }
 
 function deleteImageMultipleChoice(image){

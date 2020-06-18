@@ -18,6 +18,10 @@ const rateSchema = new Schema({
     type:Number,
     required:true
   },
+  content:{
+    type:String,
+    required:true
+  },
   updated_at: Date,
 });
 
