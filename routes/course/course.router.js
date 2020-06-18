@@ -2,6 +2,8 @@ const Router = require("express").Router();
 const verifyToken = require("../../middleware/verifyToken");
 const CourseController = require("../../controller/course.controller");
 var multer = require("multer");
+var axios = require("axios");
+const courseController = require("../../controller/course.controller");
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -146,6 +148,32 @@ Router.get("/search-course/:str",async function (req, res, next) {
   try{
     var courses = await CourseController.searchCourse(req.params.str);
     res.status(200).send(courses);
+  }catch(err){
+    res.status(500).send({"message":"Lỗi server"});
+  } 
+});
+
+Router.get("/recommend-course/:idCourse",async function (req, res, next) {
+  try{
+
+    axios.get("http://localhost:8000/get-recommend/?id='"+req.params.idCourse+"'").then(async (result)=>{
+      let data=res.data;
+      let ids=res.data.result;
+      let newIds=[];
+      for(let i=0;i<ids.length;i++){
+        newIds.push(ids[i]);
+        if(i>6){
+          break;
+        }
+      }
+      let courseRecommend= await courseController.getCourseByArrayId(newIds);
+      res.status(200).send(courseRecommend);
+    }).catch(err=>{
+      console.log(err);
+      res.status(200).send({"result":[]});
+    });
+
+
   }catch(err){
     res.status(500).send({"message":"Lỗi server"});
   } 

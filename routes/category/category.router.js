@@ -1,6 +1,7 @@
 const Router = require("express").Router();
 const categoryController = require("../../controller/category.controller");
 var verifyToken = require("../../middleware/verifyToken");
+var verifyAdmin = require("../../middleware/verifyAdmin");
 var multer  = require('multer');
 const { check, validationResult,body } = require('express-validator');
 const fs=require('fs');
@@ -41,7 +42,7 @@ let validateCategory=[
 ];
 
 
-Router.post("/add-category",[verifyToken,upload.single('image'),validateCategory], function(req, res, next) {
+Router.post("/add-category",[verifyAdmin,upload.single('image'),validateCategory], function(req, res, next) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
@@ -50,6 +51,7 @@ Router.post("/add-category",[verifyToken,upload.single('image'),validateCategory
         if(result.status){
             return res.status(200).send(result.category);
         }else{
+            console.log(result.message);
             return res.status(500).send({message:result.message});
         }
     }).catch(err=>{
@@ -58,7 +60,7 @@ Router.post("/add-category",[verifyToken,upload.single('image'),validateCategory
     })
 });
 
-Router.put("/update-category/:id", [verifyToken,upload.single('image'),validateCategory],function(req, res, next) {
+Router.put("/update-category/:id", [verifyAdmin,upload.single('image'),validateCategory],function(req, res, next) {
     categoryController.updateCategory(req.params.id,req.body,req.file.filename).then(result=>{
         if(result.status){
             return res.status(200).send(result.category);
@@ -71,7 +73,7 @@ Router.put("/update-category/:id", [verifyToken,upload.single('image'),validateC
     })
 });
 
-Router.delete("/delete-category/:id",verifyToken,function(req, res, next) {
+Router.delete("/delete-category/:id",verifyAdmin,function(req, res, next) {
     categoryController.deleteCategory(req.params.id).then(deletedCategory=>{
         return res.status(200).send(deletedCategory);
     }).catch(err=>{

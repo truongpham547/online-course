@@ -196,6 +196,15 @@ async function rateCourse(idCourse,dataUser){
   }
 }
 
+async function getCourseByArrayId(ids){
+  try{
+    let courses= await course.find({'_id':{$in:ids}});
+    return courses;
+  }catch(error){
+    throw new Error(error);
+  }
+}
+
 module.exports = {
   createCourse: createCourse,
   deleteCourse: deleteCourse,
@@ -208,5 +217,6 @@ module.exports = {
   getbyId: getbyId,
   permitCourse: permitCourse,
   searchCourse:searchCourse,
-  rateCourse:rateCourse
+  rateCourse:rateCourse,
+  getCourseByArrayId:getCourseByArrayId
 };
