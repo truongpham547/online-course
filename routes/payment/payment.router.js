@@ -125,7 +125,7 @@ Router.post("/pay", async (req, res) => {
                 }
             }, 
         });
-        console.log(charges);
+        // console.log(charges);
        
 
         for(let i=0;i<req.body.cart.length;i++){

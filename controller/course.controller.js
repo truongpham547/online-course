@@ -3,6 +3,7 @@ var courseModel = require("../model/course.model");
 const fs = require("fs");
 var path = require("path");
 const courses = require("../schema/course.schema");
+const orders = require("../schema/order.schema");
 
 function createCourse(data) {
   return new Promise((resolve, reject) => {
@@ -205,6 +206,19 @@ async function getCourseByArrayId(ids){
   }
 }
 
+async function checkIsBoughtThisCourse(idUser,idCourse){
+  try{
+    let ordered= await orders.findOne({idUser:idUser,idCourse:idCourse});
+    if(ordered){
+      return {"bought":true};
+    }else{
+      return {"bought":false};
+    }
+  }catch(error){
+    throw new Error(error);
+  }
+}
+
 module.exports = {
   createCourse: createCourse,
   deleteCourse: deleteCourse,
@@ -218,5 +232,6 @@ module.exports = {
   permitCourse: permitCourse,
   searchCourse:searchCourse,
   rateCourse:rateCourse,
-  getCourseByArrayId:getCourseByArrayId
+  getCourseByArrayId:getCourseByArrayId,
+  checkIsBoughtThisCourse:checkIsBoughtThisCourse
 };

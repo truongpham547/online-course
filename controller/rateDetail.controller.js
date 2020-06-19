@@ -14,7 +14,8 @@ async function createRate(dataUser,image){
 
 
 
-    var isRated= await rateDetailSchema.findOne({idUser:dataUser.idUser,idCourse:dataUser.idCourse});
+    var isRated= await rateDetailSchema.findOne({idUser:dataUser.idUser,idCourse:dataUser.idCourse}).sort({create_at:-1});
+    // console.log(isRated);
     if(isRated){
         try {
             var newEVGVote = (totalStar+dataUser.numStar-isRated.numStar)/(totalVote);

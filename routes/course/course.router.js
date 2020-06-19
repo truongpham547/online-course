@@ -173,7 +173,6 @@ Router.get("/recommend-course/:idCourse",async function (req, res, next) {
       res.status(200).send({"result":[]});
     });
 
-
   }catch(err){
     res.status(500).send({"message":"Lỗi server"});
   } 
@@ -191,6 +190,14 @@ Router.put("/rate-course/:idCourse",async(req,res,next)=>{
 });
 
 
+Router.get("/check-is-bough-this-course/:idCourse/:idUser",async function (req, res, next) {
+  try{
+    var ordered = await CourseController.checkIsBoughtThisCourse(req.params.idUser,req.params.idCourse);
+    res.status(200).send(ordered);
+  }catch(err){
+    res.status(500).send({"message":"Lỗi server"});
+  } 
+});
 
 
 module.exports = Router;
