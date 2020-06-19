@@ -22,7 +22,11 @@ const rateSchema = new Schema({
     type:String,
     required:true
   },
-  updated_at: Date,
+  create_at: {
+    type:Date,
+    required:true,
+    default:Date.now()
+  }
 });
 
 const courses = mongoose.model("rate", rateSchema);

@@ -11,9 +11,7 @@ async function createRate(dataUser){
     
     let totalStar =EVGVote*totalVote;
  
-    var test=[];
 
-    var rateOption="asas";
 
 
     var isRated= await rateDetailSchema.findOne({idUser:dataUser.idUser,idCourse:dataUser.idCourse});
@@ -34,13 +32,13 @@ async function createRate(dataUser){
                         console.log(err);
                         throw new Error(err);
                       }
-                      return doc;
+                    //   return doc;
                   });
             } catch (error) {
                 console.log(error);
                 throw new Error(error);
             }
-            await rateDetailSchema.findOneAndUpdate({idUser:dataUser.idUser,idCourse:dataUser.idCourse},{numStar:dataUser.numStar});
+            // await rateDetailSchema.findOneAndUpdate({idUser:dataUser.idUser,idCourse:dataUser.idCourse},{numStar:dataUser.numStar});
         } catch (error) {
             throw new Error(error);
         }
@@ -60,43 +58,52 @@ async function createRate(dataUser){
                         console.log(err);
                         throw new Error(err);
                       }
-                      return doc;
+                    //   return doc;
                   });
             } catch (error) {
                 console.log(error);
                 throw new Error(error);
             }
-            var rate = new rateDetailSchema();
-            rate.idUser=dataUser.idUser;
-            rate.numStar = dataUser.numStar;
-            rate.idCourse = dataUser.idCourse;
-            let newRate = await rate.save();
-            return newRate;
+
         } catch (error) {
             throw new Error(error);
         }
+
     }
-
-    console.log(rateOption);
-
-
+    var rate = new rateDetailSchema();
+    rate.idUser=dataUser.idUser;
+    rate.numStar = dataUser.numStar;
+    rate.idCourse = dataUser.idCourse;
+    rate.content = dataUser.content;
+    let newRate = await rate.save();
+    return newRate;
 } 
 
-async function updateRate(idCourse,idUser,userData){
+
+
+
+async function getRateByIdUser(idUser){
     try {
-        let rateUpdate = await rateDetailSchema.findOneAndUpdate({idCourse:idCourse,idUser:idUser},{
-            numStar:userData.numStar
-        },{
-            new:true
-        });
-        return rateUpdate;
+        let rates = await rateDetailSchema.find({idUser:idUser}).sort({create_at:-1});
+        return rates;
     } catch (error) {
         throw new Error(error);
     }
+} 
 
-}
+async function getRateByIdCourse(idCourse){
+    try {
+        let rates = await rateDetailSchema.find({idCourse:idCourse}).sort({create_at:-1});
+        return rates;
+    } catch (error) {
+        throw new Error(error);
+    }
+} 
+
+
 
 module.exports={
     createRate:createRate,
-    updateRate:updateRate
+    getRateByIdUser:getRateByIdUser,
+    getRateByIdCourse:getRateByIdCourse
 }
