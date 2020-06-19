@@ -4,6 +4,7 @@ const CourseController = require("../../controller/course.controller");
 var multer = require("multer");
 var axios = require("axios");
 const courseController = require("../../controller/course.controller");
+const checkIsOwnerOfCourse = require("../../config/checkIsOwnerOfCourse");
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -101,10 +102,14 @@ Router.get("/get-top", function (req, res, next) {
 });
 
 Router.delete("/delete/:id", verifyToken, function (req, res, next) {
+
   try {
-    CourseController.deleteCourse(req.params.id, req.user.id).then((result) => {
-      return res.status(200).send(result);
-    });
+    if(checkIsOwnerOfCourse(req.user,req.params.id)){
+      CourseController.deleteCourse(req.params.id, req.user.id).then((result) => {
+        return res.status(200).send(result);
+      });
+    }
+
   } catch (error) {
     return res.status(500).send({ status: "error" });
   }
@@ -180,13 +185,18 @@ Router.get("/recommend-course/:idCourse",async function (req, res, next) {
 });
 
 
-Router.put("/rate-course/:idCourse",async(req,res,next)=>{
+Router.put("/rate-course/:idCourse",verifyToken,async(req,res,next)=>{
   try{
-    let result = CourseController.rateCourse(req.params.idCourse,req.body);
+    var ordered = await CourseController.checkIsBoughtThisCourse(req.user.id,req.params.idCourse);
+    if(ordered.bought){
+      let result = CourseController.rateCourse(req.params.idCourse,req.body);
+    }else{
+      res.status(500).send({"message":"Chưa mua thì không được rate"});
+    }
     return res.status(200).send(result);
   }catch(error){
     console.log(error);
-    res.status(200).send({"message":"Lỗi server"});
+    res.status(500).send({"message":"Lỗi server"});
   }
 });
 
