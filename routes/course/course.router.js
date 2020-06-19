@@ -157,8 +157,9 @@ Router.get("/recommend-course/:idCourse",async function (req, res, next) {
   try{
 
     axios.get("http://localhost:8000/get-recommend/?id='"+req.params.idCourse+"'").then(async (result)=>{
-      let data=res.data;
-      let ids=res.data.result;
+      let data=result.data;
+      let ids=result.data.result;
+      // console.log(res.data);
       let newIds=[];
       for(let i=0;i<ids.length;i++){
         newIds.push(ids[i]);
