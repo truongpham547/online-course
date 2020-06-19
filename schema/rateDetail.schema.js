@@ -26,6 +26,11 @@ const rateSchema = new Schema({
     type:Date,
     required:true,
     default:Date.now()
+  },
+  image:{
+    type:String,
+    required:false,
+    default:""
   }
 });
 

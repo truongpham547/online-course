@@ -2,7 +2,7 @@ const rateDetailSchema= require("../schema/rateDetail.schema");
 const courseSchema = require("../schema/course.schema");
 const courses = require("../schema/course.schema");
 
-async function createRate(dataUser){
+async function createRate(dataUser,image){
 
     var courseDetail = await courseSchema.findOne({_id:dataUser.idCourse});
     var totalVote = courseDetail.vote.totalVote;
@@ -75,6 +75,7 @@ async function createRate(dataUser){
     rate.numStar = dataUser.numStar;
     rate.idCourse = dataUser.idCourse;
     rate.content = dataUser.content;
+    rate.image=image;
     let newRate = await rate.save();
     return newRate;
 } 
@@ -93,7 +94,9 @@ async function getRateByIdUser(idUser){
 
 async function getRateByIdCourse(idCourse){
     try {
-        let rates = await rateDetailSchema.find({idCourse:idCourse}).sort({create_at:-1});
+        let rates = await rateDetailSchema.find({idCourse:idCourse}).sort({create_at:-1})
+                    .populate("idUser",["name","image"],"users")
+        ;
         return rates;
     } catch (error) {
         throw new Error(error);
