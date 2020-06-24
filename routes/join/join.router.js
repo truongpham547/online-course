@@ -80,4 +80,14 @@ Router.get("/get-summary-join-this-year",async function (req, res, next) {
     } 
 });
 
+Router.get("/get-list-lesson-completed/:idUser/:idCourse",async (req,res,next)=>{
+    try{
+        var listCompleted = await joinController.getListLessonCompleted(req.params.idUser,req.params.idCourse);
+        res.status(200).send(listCompleted);
+    }catch(err){
+        console.log(err);
+        res.status(500).send({"message":"Lỗi server"});
+    } 
+});
+
 module.exports=Router;

@@ -12,9 +12,41 @@ var cors = require("cors");
 var bodyParser = require("body-parser");
 // var upload = require("express-fileupload");
 var expressValidator = require('express-validator');
-const socketIo = require("socket.io");
-const http = require("http");
 
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+
+
+var numUserOnline=0;
+io.on('connection', (socket) => {
+  if(addedUser) return;
+  var addedUser = false;
+  socket.on('join discuss', (data) => {
+    // we tell the client to execute 'new message'
+    addedUser=true;
+    socket.username=data.username;
+    socket.idUser=data.idUser;
+    socket.idCourse = data.idCourse;
+    socket.image=data.image;
+    socket.idLesson=data.idLesson;
+
+    socket.broadcast.emit('new message', {
+      message: "user join success"
+    });
+  });
+
+  socket.on('add comment',(data)=>{
+    socket.broadcast.emit('new message',{
+      username: socket.username,
+      idUser:socket.idUser,
+      idCourse:socket.idCourse,
+      idLesson:socket.idLesson,
+      image:socket.image,
+      idParent:data.idParent,
+      message: data.message
+    });
+  })
+});
 
 
 dotenv.config();
@@ -39,15 +71,8 @@ app.use(bodyParser.json());
 
 app.use("/", indexRouter);
 
-app.get("/alive",(req,res,next)=>{
-  res.status(200).send({"message":"i'm alive"});
-})
 
-const server = http.createServer(app);
 
-const io = socketIo(server); // < Interesting!
-
-const getApiAndEmit = "TODO";
 
 
 

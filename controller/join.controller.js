@@ -193,6 +193,18 @@ async function checkIsCompleteCourse(idCourse,idUser){
     }
 }
 
+async function getListLessonCompleted(idUser,idCourse){
+    try {
+        
+        let join= await joinSchema.findOne({idUser:idUser,idCourse:idCourse});
+        let lessonCompleted= await lessonProgressSchema.find({idJoin:join._id});
+        return lessonCompleted;
+    } catch (error) {
+        throw new Error(error);
+    }
+    
+}
+
 
 
 module.exports = {
@@ -205,5 +217,6 @@ module.exports = {
     getTotalStudentJoinCourse:getTotalStudentJoinCourse,
     getCourseProgressJoinByIdUser:getCourseProgressJoinByIdUser,
     getTotalJoinCourseGroupByMonth:getTotalJoinCourseGroupByMonth,
-    checkIsCompleteCourse:checkIsCompleteCourse
+    checkIsCompleteCourse:checkIsCompleteCourse,
+    getListLessonCompleted:getListLessonCompleted
 }

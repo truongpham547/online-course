@@ -2,6 +2,10 @@ const Router = require("express").Router();
 const verifyToken = require("../../middleware/verifyToken");
 const commentController = require("../../controller/comment.controller");
 
+
+
+
+
 var multer = require("multer");
 
 var storage = multer.diskStorage({
@@ -47,6 +51,7 @@ Router.get('/get-child-comment-by-id-parent/:idParent',async (req,res,next)=>{
 });
 
 Router.post("/add-comment",upload.single("image"),async(req,res,next)=>{
+
     try{
         if(req.file==undefined){
           var newComment =await commentController.addComment(req.body,undefined);
