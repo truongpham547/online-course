@@ -3,7 +3,7 @@ const verifyToken = require("../../middleware/verifyToken");
 const rateDetailController = require("../../controller/rateDetail.controller");
 var multer  = require('multer');
 const { check, validationResult,body } = require('express-validator');
-
+var joinController = require("../../controller/join.controller");
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -40,6 +40,10 @@ Router.post("/create-rate",[upload.single('image'),validateRate], async (req, re
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array({ onlyFirstError: true }) });
+    }
+
+    if(! await joinController.checkIsCompleteCourse(req.body.idCourse,req.body.idUser)){
+      return res.status(500).send({"message":"Bạn chưa hoàn thành hơn 80% khóa học"});
     }
 
     var fileName="";

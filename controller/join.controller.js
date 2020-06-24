@@ -160,6 +160,41 @@ async function getCourseProgressJoinByIdUser(idCourse,idUser){
     }
 }
 
+async function getTotalJoinCourseGroupByMonth(){
+    try{
+        let total = await joinSchema.aggregate([
+            {
+                $group:{
+                    _id:{
+                        // year:'$created_at',
+                        month: '$created_at'
+                    },
+                    "Total":{
+                        $sum:1
+                    }
+                }
+            }
+        ]);
+        return total;
+    }catch(err){
+        throw new Error(err);
+    }
+}
+
+async function checkIsCompleteCourse(idCourse,idUser){
+    let joinDetail =await joinSchema.findOne({idUser:idUser,idCourse});
+    if(!joinDetail){
+        return false;
+    }
+    if(joinDetail.percentCompleted>=80){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+
+
 module.exports = {
     joinCourse:joinCourse,
     getCoursesJoinedByIdUser:getCoursesJoinedByIdUser,
@@ -168,5 +203,7 @@ module.exports = {
     deleteJoin:deleteJoin,
     updateProgressLesson:updateProgressLesson,
     getTotalStudentJoinCourse:getTotalStudentJoinCourse,
-    getCourseProgressJoinByIdUser:getCourseProgressJoinByIdUser
+    getCourseProgressJoinByIdUser:getCourseProgressJoinByIdUser,
+    getTotalJoinCourseGroupByMonth:getTotalJoinCourseGroupByMonth,
+    checkIsCompleteCourse:checkIsCompleteCourse
 }

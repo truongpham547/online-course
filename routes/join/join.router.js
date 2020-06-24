@@ -70,5 +70,14 @@ Router.get("/get-progress-course-join-by-idUser-and-idCourse/:idUser/:idCourse",
     } 
 });
 
+Router.get("/get-summary-join-this-year",async function (req, res, next) {
+    try{
+        var joinDetail = await joinController.getTotalJoinCourseGroupByMonth();
+        res.status(200).send(joinDetail);
+    }catch(err){
+        console.log(err);
+        res.status(500).send({"message":"Lỗi server"});
+    } 
+});
 
 module.exports=Router;

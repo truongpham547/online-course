@@ -187,7 +187,7 @@ function getbyIduser(iduser) {
 function getfree() {
   return new Promise((resolve, reject) => {
     courseSchema
-      .find({ price: 0 })
+      .find({ price: 0,is_checked:1})
       .populate("idUser", "name")
       .populate("category", "name")
       .sort({ created_at: -1 })
@@ -203,7 +203,7 @@ function getfree() {
 function gettop() {
   return new Promise((resolve, reject) => {
     courseSchema
-      .find()
+      .find({is_checked:1})
       .populate("idUser", "name")
       .populate("category", "name")
       .sort({ ranking: -1, created_at: -1 })

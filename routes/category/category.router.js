@@ -100,5 +100,15 @@ Router.get("/get-all-category", function(req, res, next) {
     })
 });
 
+Router.get("/get-total-course-each-category",async(req,res)=>{
+    try{
+        var data= await categoryController.getTotalCourseEachCategory();
+        res.status(200).send(data);
+    }catch(error){
+        console.log(error);
+        return res.status(500).send({message:"Lỗi server"});
+    }
+});
+
 
 module.exports= Router;

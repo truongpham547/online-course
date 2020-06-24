@@ -12,6 +12,8 @@ var cors = require("cors");
 var bodyParser = require("body-parser");
 // var upload = require("express-fileupload");
 var expressValidator = require('express-validator');
+const socketIo = require("socket.io");
+const http = require("http");
 
 
 
@@ -34,7 +36,20 @@ app.use(bodyParser.json());
 
 
 
+
 app.use("/", indexRouter);
+
+app.get("/alive",(req,res,next)=>{
+  res.status(200).send({"message":"i'm alive"});
+})
+
+const server = http.createServer(app);
+
+const io = socketIo(server); // < Interesting!
+
+const getApiAndEmit = "TODO";
+
+
 
 //connect mongodb
 

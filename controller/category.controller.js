@@ -1,6 +1,7 @@
 const fs=require('fs');
 const path = require('path');
 var categorySchema = require('../schema/category.schema');
+var courseSchema = require('../schema/course.schema');
 
 function addCategory(userData,image) {
   return new Promise((resolve, reject) => {
@@ -80,11 +81,32 @@ function updateCategory(id,userData,image){
     })
 }
 
+async function getTotalCourseEachCategory(){
+    try{
+        var result= await courseSchema.aggregate([
+            {
+                $group:{
+                    _id:{
+                        category:"$category"
+                    },
+                    "Total":{
+                        $sum:1
+                    }
+                }
+            },
+        ]);
+        return result;
+    }catch(error){
+        throw new Error(error);
+    }
+    
+}
 
 module.exports = {
     addCategory:addCategory,
     getCategory:getCategory,
     getCategories:getCategories,
     deleteCategory:deleteCategory,
-    updateCategory:updateCategory
+    updateCategory:updateCategory,
+    getTotalCourseEachCategory:getTotalCourseEachCategory
 }

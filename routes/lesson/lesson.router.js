@@ -82,9 +82,9 @@ Router.post('/create-lesson',[verifyToken,cpUpload,validateLesson],function (req
 });
 
 
-Router.get('/get-lesson-by-id-course/:idCourse', async function (req, res, next) {
-  // var isOwner= await checkIsOwnerOfCourse(req.user.id,req.params.idCourse);
-  lessonController.getLessonByCourseId(req.params.idCourse).then(lessons=>{
+Router.get('/get-lesson-by-id-course/:idCourse',verifyToken, async function (req, res, next) {
+  var isOwner=await checkIsOwnerOfCourse(req.user,req.params.idCourse);
+  lessonController.getLessonByCourseId(isOwner,req.params.idCourse).then(lessons=>{
     res.status(200).send(lessons);
   }).catch(err=>{
     console.log(err);
@@ -270,8 +270,8 @@ Router.put('/add-more-list-multiple-choice/:idLesson',[verifyToken,validateListM
 
 Router.get('/get-lesson-by-id/:idLesson',verifyToken,async function (req, res, next) {
 
-  var isOwner=await checkIsOwnerOfLesson(req.user.id,req.params.idLesson);
-
+  var isOwner=await checkIsOwnerOfLesson(req.user,req.params.idLesson);
+  console.log("result of check",isOwner);
   lessonController.getLessonById(req.params.idLesson,isOwner).then(lesson=>{
     res.status(200).send(lesson);
   }).catch(err=>{

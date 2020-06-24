@@ -18,14 +18,16 @@ function createLesson(docs,video,data){
     });
 }
 
-function getLessonByCourseId(idCourse){
-    return new Promise((resolve,reject)=>{
-        lessonSchema.find({idCourse:idCourse}).select('-multipleChoices.answer').sort({order:1}).then(lesson=>{
-            return resolve(lesson);
-        }).catch(err=>{
-            return reject(err);
-        })
-    });
+async function getLessonByCourseId(isOwner,idCourse){
+   
+    if(isOwner){
+        let lesson =await lessonSchema.find({idCourse:idCourse}).sort({order:1});
+        return lesson;
+    }else{
+        let lesson =await lessonSchema.find({idCourse:idCourse}).select('-multipleChoices.answer').sort({order:1});
+        return lesson;
+    }
+ 
 }
 
 function deleteLesson(idLesson){
