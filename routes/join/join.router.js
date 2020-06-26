@@ -2,9 +2,11 @@ const Router = require("express").Router();
 // const verifyToken = require("../../middleware/verifyToken");
 const joinController = require("../../controller/join.controller");
 const orderController = require("../../controller/order.controller");
+const courseController = require("../../controller/course.controller");
 
 Router.post("/create-join", async function(req, res, next) {
-
+    var courseDetail =await courseController.getbyId(req.body.idCourse);
+    var orderDetail=null;
     try{
         var orderDetail = await orderController.getOrderByIdUserAndIdCourse(req.idUser,req.idCourse);
     }catch(err){

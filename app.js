@@ -12,17 +12,25 @@ var cors = require("cors");
 var bodyParser = require("body-parser");
 // var upload = require("express-fileupload");
 var expressValidator = require('express-validator');
+var commentController = require("./controller/comment.controller");
+// var siofu = require("socketio-file-upload");
+// app.use(siofu.router);
+
 
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
-
+server.listen(9000, () => {
+  console.log("server is running on port 9000");
+});
 var numUserOnline=0;
 io.on('connection', (socket) => {
-  if(addedUser) return;
-  var addedUser = false;
+  addedUser=false;
+  io.emit('connected',{
+    "message":"one student join discuss"
+  });
+
   socket.on('join discuss', (data) => {
-    // we tell the client to execute 'new message'
     addedUser=true;
     socket.username=data.username;
     socket.idUser=data.idUser;
@@ -30,20 +38,60 @@ io.on('connection', (socket) => {
     socket.image=data.image;
     socket.idLesson=data.idLesson;
 
-    socket.broadcast.emit('new message', {
-      message: "user join success"
+    io.emit('new user join discuss', {
+      username:socket.username,
+      idUser:socket.idUser,
+      idCourse:socket.idCourse,
+      image:socket.image,
+      idCourse:socket.idCourse,
+      idLesson:socket.idLesson
     });
   });
 
-  socket.on('add comment',(data)=>{
-    socket.broadcast.emit('new message',{
-      username: socket.username,
-      idUser:socket.idUser,
-      idCourse:socket.idCourse,
-      idLesson:socket.idLesson,
-      image:socket.image,
+  socket.on('add comment',async (data)=>{
+    console.log(data);    
+    var imageName="";
+    if(data.image!=""){
+      const extention = data.image.substring("data:image/".length, data.image.indexOf(";base64"));
+      const indexSlice = data.image.indexOf('base64') + 6;
+      const imgBase64 = data.image.slice(indexSlice + 1,data.image.length-1);
+      try{
+        imageName=`${Date.now() + '-' + Math.round(Math.random() * 1E9)}.${extention}`;
+        await fs.writeFile(`public/upload/comment_image/${imageName}`, imgBase64,'base64',(err=>{
+          console.log(err);
+        }));
+      }catch(err){
+        console.log(err);
+      }
+    }
+
+
+
+    var reqData={
+      idCourse:data.idCourse,
+      idUser:data.idUser,
       idParent:data.idParent,
-      message: data.message
+      content:data.content,
+      idLesson:data.idLesson
+      
+    };
+
+    var newComment= await commentController.addComment(reqData,imageName,"lesson");
+
+
+    io.emit('new comment',{
+
+      idUser:{
+        image:data.userImage,
+        name:data.username
+      },
+      image:imageName,
+      idCourse:data.idCourse,
+      idLesson:data.idLesson,
+      idParent:data.idParent=="null"?null:data.idParent,
+      content: data.content,
+      created_at:newComment.created_at,
+      _id:newComment._id
     });
   })
 });
@@ -93,8 +141,6 @@ mongoose.connect(
   }
 );
 
-app.listen(9000, () => {
-  console.log("server is running on port 9000");
-});
+
 
 module.exports = app;

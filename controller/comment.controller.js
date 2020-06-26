@@ -6,6 +6,7 @@ async function getParentComment(idCourse,idLesson,skip,limit,pageType="lesson") 
     try {
         var comments = await commentSchema.find({idCourse:idCourse,idLesson:idLesson,idParent:null,pageType:pageType})
             .populate("idUser",["email","name","image"],"users")
+            .sort({created_at:-1})
             .limit(parseInt(limit))
             .skip(parseInt(skip));
             
@@ -13,7 +14,7 @@ async function getParentComment(idCourse,idLesson,skip,limit,pageType="lesson") 
         
         for(let i=0;i<comments.length;i++){
             try {
-                var childComment = await commentSchema.find({idParent:comments[i]._id}).populate("idUser",["email","name","image"],"users");
+                var childComment = await commentSchema.find({idParent:comments[i]._id}).populate("idUser",["email","name","image"],"users").sort({created_at:-1});
                 var tmp = tmpComments[i];
                 tmpComments[i]={...tmp._doc,"childComment":childComment};
             } catch (error) {
@@ -34,7 +35,7 @@ async function getChildCommentById(idParent){
         
         for(let i=0;i<comments.length;i++){
             try {
-                var childComment = await commentSchema.find({idParent:comments[i]._id}).populate("idUser",["email","name","image"],"users");
+                var childComment = await commentSchema.find({idParent:comments[i]._id}).populate("idUser",["email","name","image"],"users").sort({created_at:-1});
                 var tmp = tmpComments[i];
                 tmpComments[i]={...tmp._doc,"childComment":childComment};
             } catch (error) {
