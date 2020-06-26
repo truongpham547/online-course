@@ -78,7 +78,7 @@ Router.delete("/delete-category/:id",verifyAdmin,function(req, res, next) {
         return res.status(200).send(deletedCategory);
     }).catch(err=>{
         console.log(err);
-        return res.status(500).send({message:"Lỗi server"});
+        return res.status(500).send({message:"Lỗi server",err});
     })
 });
 

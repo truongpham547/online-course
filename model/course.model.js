@@ -127,7 +127,8 @@ function gets() {
     courseSchema
       .find()
       .populate("idUser", "name")
-      .populate("category", "name")
+      .populate("category",["name"],"categories")
+      // .populate("category", "name")
       .sort({ created_at: -1 })
       .then((courses) => {
         return resolve(courses);

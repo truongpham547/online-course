@@ -47,19 +47,26 @@ function getCategories(){
 
 function deleteCategory(id){
     return new Promise((resolve,reject)=>{
-        categorySchema.findOne({_id:id}).then(category=>{
-            fs.unlink(path.join(__dirname, '../public/upload/category/')+category.image,(err)=>{
-                console.log(err);
-            });
-            categorySchema.deleteOne({_id:id}).then(deletedCategory=>{
-                return resolve(deletedCategory);
-            }).catch(err=>{
-                return reject(err);
-            })
+        courseSchema.findOne({category:id}).then(course=>{
+            if(!course){
+                categorySchema.findOne({_id:id}).then(category=>{
+                    fs.unlink(path.join(__dirname, '../public/upload/category/')+category.image,(err)=>{
+                        console.log(err);
+                    });
+                    categorySchema.deleteOne({_id:id}).then(deletedCategory=>{
+                        return resolve(deletedCategory);
+                    }).catch(err=>{
+                        return reject(err);
+                    })
+                }).catch(err=>{
+                    return reject(err);
+                })
+            }else{
+                return reject({"message":"Đang có khóa học thuộc danh mục này"});
+            }
         }).catch(err=>{
-            return reject(err);
+            reject(err);
         })
-
     })
 }
 
