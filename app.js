@@ -13,8 +13,6 @@ var bodyParser = require("body-parser");
 // var upload = require("express-fileupload");
 var expressValidator = require('express-validator');
 var commentController = require("./controller/comment.controller");
-// var siofu = require("socketio-file-upload");
-// app.use(siofu.router);
 
 
 var server = require('http').createServer(app);
@@ -114,13 +112,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-
-
 app.use("/", indexRouter);
-
-
-
 
 
 
@@ -140,7 +132,6 @@ mongoose.connect(
     }
   }
 );
-
 
 
 module.exports = app;
