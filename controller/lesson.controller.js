@@ -34,7 +34,7 @@ async function addProgressToEachLesson(idCourse,idUser,lessons){
 
                 if(lesson._id.equals(lessonProgress[i].idLesson) && lessonProgress[i].isCompleted==1){
                     console.log("equal");
-                    newLesson[index]["isComplete"]=true;
+                    newLesson[index]["isCompleted"]=true;
                 }
             })
         }
