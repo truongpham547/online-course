@@ -30,11 +30,10 @@ async function addProgressToEachLesson(idCourse,idUser,lessons){
         var newLesson = lessons;
         for(let i=0;i<lessonProgress.length;i++){
             lessons.find((lesson,index)=>{
-                console.log(lesson._id,"-asdsadasd-",lessonProgress[i].idLesson,"----",(lesson._id.equals(lessonProgress[i].idLesson) ));
-
+                console.log(lesson._id,"-asdsadasd-",lessonProgress[i].idLesson,"----",(lesson._id.equals(lessonProgress[i].idLesson)  && lessonProgress[i].isCompleted==1));
                 if(lesson._id.equals(lessonProgress[i].idLesson) && lessonProgress[i].isCompleted==1){
                     console.log("equal");
-                    newLesson[index]["isCompleted"]=true;
+                    newLesson[index]["isComplete"]=1;
                 }
             })
         }
