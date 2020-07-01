@@ -65,6 +65,7 @@ Router.put("/update-category/:id", [verifyAdmin,upload.single('image'),validateC
         if(result.status){
             return res.status(200).send(result.category);
         }else{
+            console.log({message:result.message});
             return res.status(500).send({message:result.message});
         }
     }).catch(err=>{
