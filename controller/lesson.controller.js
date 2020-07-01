@@ -22,14 +22,18 @@ function createLesson(docs,video,data){
 
 async function addProgressToEachLesson(idCourse,idUser,lessons){
     var joinDetail = await joinSchema.findOne({idUser:idUser,idCourse:idCourse});
+    // console.log("asdasd",lessons);
     if(joinDetail){
         var lessonProgress = await lessonProgressSchema.find({idJoin:joinDetail._id});
         
         var newLesson = lessons;
         for(let i=0;i<lessonProgress.length;i++){
             lessons.find((lesson,index)=>{
-                if(lesson._id==lessonProgress[i].idLesson && lessonProgress[i].isCompleted==1){
+                if(lesson._id.equals(lessonProgress[i].idLesson) && lessonProgress[i].isCompleted==1){
+                    console.log("equal");
                     newLesson[index]["isComplete"]=1;
+                }else{
+                    newLesson[index]["isComplete"]=0;
                 }
             })
         }
@@ -43,11 +47,11 @@ async function getLessonByCourseId(isOwner,idCourse,idUser){
    
     console.log("run run");
     if(isOwner){
-        let lesson =await lessonSchema.find({idCourse:idCourse}).sort({order:1});
+        let lesson =await lessonSchema.find({idCourse:idCourse}).sort({order:1}).lean();
         let lessonWithProgress=await addProgressToEachLesson(idCourse,idUser,lesson);
         return lessonWithProgress;
     }else{
-        let lesson =await lessonSchema.find({idCourse:idCourse}).select('-multipleChoices.answer').sort({order:1});
+        let lesson =await lessonSchema.find({idCourse:idCourse}).select('-multipleChoices.answer').sort({order:1}).lean();
         let lessonWithProgress=await addProgressToEachLesson(idCourse,idUser,lesson);
         return lessonWithProgress;
     }
