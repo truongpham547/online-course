@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('add comment',async (data)=>{
-    console.log(data);    
+    // console.log(data);    
     var imageName="";
     if(data.image!=""){
       const extention = data.image.substring("data:image/".length, data.image.indexOf(";base64"));
@@ -74,8 +74,11 @@ io.on('connection', (socket) => {
       
     };
 
-    var newComment= await commentController.addComment(reqData,imageName,"lesson");
-
+    try{
+      var newComment= await commentController.addComment(reqData,imageName,"lesson");
+    }catch(error){
+      console.log(error);
+    }
 
     io.emit('new comment',{
 
