@@ -65,7 +65,7 @@ function deleteCategory(id){
                 return reject({"message":"Đang có khóa học thuộc danh mục này"});
             }
         }).catch(err=>{
-            reject(err);
+            reject({"message":"Lỗi Server"});
         })
     })
 }

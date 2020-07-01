@@ -92,4 +92,15 @@ Router.get("/get-list-lesson-completed/:idUser/:idCourse",async (req,res,next)=>
     } 
 });
 
+
+Router.get("/check-is-join-course/:idUser/:idCourse",async (req,res,next)=>{
+    try{
+        var isJoined = await joinController.isJoined(req.params.idUser,req.params.idCourse);
+        res.status(200).send({"is-joined":isJoined});
+    }catch(err){
+        console.log(err);
+        res.status(500).send({"message":"Lỗi server"});
+    } 
+});
+
 module.exports=Router;

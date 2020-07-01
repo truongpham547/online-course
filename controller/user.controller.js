@@ -127,17 +127,17 @@ function getUsers() {
 
 function deleteuser(id) {
   return new Promise((resolve, reject) => {
-    User.findOneAndDelete({ _id: id, role: { $not: "admin" } })
+    User.findOneAndDelete({ _id: id, role: { $ne:  "admin" } })
       .then((user) => {
         if (!user)
-          resolve({ status: "fail", message: "Delete admin is not permited" });
+          resolve({ status: false, message: "Không được xóa Admin!" });
         try {
           fs.unlinkSync(
             path.join(__dirname, "../public/upload/user_image/" + user.image)
           );
         } catch (err) {}
         Course.deleteMany({ iduser: id }).then(() => {
-          resolve({ status: "success" });
+          resolve({ status: true });
         });
       })
       .catch((err) => {

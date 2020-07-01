@@ -218,5 +218,6 @@ module.exports = {
     getCourseProgressJoinByIdUser:getCourseProgressJoinByIdUser,
     getTotalJoinCourseGroupByMonth:getTotalJoinCourseGroupByMonth,
     checkIsCompleteCourse:checkIsCompleteCourse,
-    getListLessonCompleted:getListLessonCompleted
+    getListLessonCompleted:getListLessonCompleted,
+    isJoined:isJoined
 }

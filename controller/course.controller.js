@@ -199,8 +199,11 @@ async function rateCourse(idCourse,dataUser){
 
 async function getCourseByArrayId(ids){
   try{
-    let courses= await course.find({'_id':{$in:ids}});
-    return courses;
+    let arr=[]
+    for(let i=0;i<ids.length;i++){
+      arr.push(await course.findOne({'_id':ids[i]}));
+    }
+    return arr;
   }catch(error){
     throw new Error(error);
   }
