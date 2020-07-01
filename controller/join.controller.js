@@ -100,7 +100,7 @@ async function updateProgressLesson(idUser,idCourse,idLesson,data){
         if(!lessonProgress){
             let insertProgress = new lessonProgressSchema();
             insertProgress.idLesson=idLesson;
-            insertProgress.isCompleted=data.isCompleted;
+            insertProgress.isCompleted=1;
             insertProgress.idJoin=joinInfo._id;
             try{
                 let inserted = await insertProgress.save();

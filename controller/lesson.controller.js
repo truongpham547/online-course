@@ -24,21 +24,23 @@ async function addProgressToEachLesson(idCourse,idUser,lessons){
     var joinDetail = await joinSchema.findOne({idUser:idUser,idCourse:idCourse});
     // console.log("asdasd",lessons);
     if(joinDetail){
+        console.log("join course");
         var lessonProgress = await lessonProgressSchema.find({idJoin:joinDetail._id});
         
         var newLesson = lessons;
         for(let i=0;i<lessonProgress.length;i++){
             lessons.find((lesson,index)=>{
+                console.log(lesson._id,"-asdsadasd-",lessonProgress[i].idLesson,"----",(lesson._id.equals(lessonProgress[i].idLesson) ));
+
                 if(lesson._id.equals(lessonProgress[i].idLesson) && lessonProgress[i].isCompleted==1){
                     console.log("equal");
-                    newLesson[index]["isComplete"]=1;
-                }else{
-                    newLesson[index]["isComplete"]=0;
+                    newLesson[index]["isComplete"]=true;
                 }
             })
         }
         return newLesson;
     }else{
+        console.log("not join course");
         return lessons;
     }
 }
