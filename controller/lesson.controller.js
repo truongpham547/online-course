@@ -1,6 +1,8 @@
 const lessonSchema = require('../schema/lesson.schema');
 const fs=require('fs');
 const path= require('path');
+const joinSchema = require("../schema/join.schema");
+const lessonProgressSchema = require("../schema/lessonProgress.schema");
 
 function createLesson(docs,video,data){
     return new Promise((resolve,reject)=>{
@@ -18,14 +20,36 @@ function createLesson(docs,video,data){
     });
 }
 
-async function getLessonByCourseId(isOwner,idCourse){
+async function addProgressToEachLesson(idCourse,idUser,lessons){
+    var joinDetail = await joinSchema.findOne({idUser:idUser,idCourse:idCourse});
+    if(joinDetail){
+        var lessonProgress = await lessonProgressSchema.find({idJoin:joinDetail._id});
+        
+        var newLesson = lessons;
+        for(let i=0;i<lessonProgress.length;i++){
+            lessons.find((lesson,index)=>{
+                if(lesson._id==lessonProgress[i].idLesson && lessonProgress[i].isCompleted==1){
+                    newLesson[index]["isComplete"]=1;
+                }
+            })
+        }
+        return newLesson;
+    }else{
+        return lessons;
+    }
+}
+
+async function getLessonByCourseId(isOwner,idCourse,idUser){
    
+    console.log("run run");
     if(isOwner){
         let lesson =await lessonSchema.find({idCourse:idCourse}).sort({order:1});
-        return lesson;
+        let lessonWithProgress=await addProgressToEachLesson(idCourse,idUser,lesson);
+        return lessonWithProgress;
     }else{
         let lesson =await lessonSchema.find({idCourse:idCourse}).select('-multipleChoices.answer').sort({order:1});
-        return lesson;
+        let lessonWithProgress=await addProgressToEachLesson(idCourse,idUser,lesson);
+        return lessonWithProgress;
     }
  
 }

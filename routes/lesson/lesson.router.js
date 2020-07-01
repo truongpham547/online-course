@@ -83,8 +83,9 @@ Router.post('/create-lesson',[verifyToken,cpUpload,validateLesson],function (req
 
 
 Router.get('/get-lesson-by-id-course/:idCourse',verifyToken, async function (req, res, next) {
+  var idUser=req.user.id;
   var isOwner=await checkIsOwnerOfCourse(req.user,req.params.idCourse);
-  lessonController.getLessonByCourseId(isOwner,req.params.idCourse).then(lessons=>{
+  lessonController.getLessonByCourseId(isOwner,req.params.idCourse,idUser).then(lessons=>{
     res.status(200).send(lessons);
   }).catch(err=>{
     console.log(err);
