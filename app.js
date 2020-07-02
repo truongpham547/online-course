@@ -13,10 +13,16 @@ var bodyParser = require("body-parser");
 // var upload = require("express-fileupload");
 var expressValidator = require('express-validator');
 var commentController = require("./controller/comment.controller");
-
+var axios = require("axios");
 
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+
+
+function removeAccents(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 
 server.listen(9000, () => {
   console.log("server is running on port 9000");
@@ -74,26 +80,37 @@ io.on('connection', (socket) => {
       
     };
 
-    try{
-      var newComment= await commentController.addComment(reqData,imageName,"lesson");
-    }catch(error){
-      console.log(error);
+    var result= await axios.get("http://localhost:8000/predict-comment/?comment="+removeAccents(data.content));
+    console.log(result.data);
+
+    if(result.data.result>0.5){
+      socket.emit('not valid',{
+        message:"vo van hoa"
+      });
+    }else{
+      try{
+        var newComment= await commentController.addComment(reqData,imageName,"lesson");
+      }catch(error){
+        console.log(error);
+      }
+  
+      io.emit('new comment',{
+  
+        idUser:{
+          image:data.userImage,
+          name:data.username
+        },
+        image:imageName,
+        idCourse:data.idCourse,
+        idLesson:data.idLesson,
+        idParent:data.idParent=="null"?null:data.idParent,
+        content: data.content,
+        created_at:newComment.created_at,
+        _id:newComment._id
+      });
     }
 
-    io.emit('new comment',{
 
-      idUser:{
-        image:data.userImage,
-        name:data.username
-      },
-      image:imageName,
-      idCourse:data.idCourse,
-      idLesson:data.idLesson,
-      idParent:data.idParent=="null"?null:data.idParent,
-      content: data.content,
-      created_at:newComment.created_at,
-      _id:newComment._id
-    });
   })
 });
 
