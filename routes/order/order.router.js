@@ -36,4 +36,14 @@ Router.post("/test-pay", async (req,res,next)=>{
     }
 });
 
+Router.get("/get-total-revenue-each-month",async (req,res,next)=>{
+    try {
+        let total= await orderController.getTotalRevenueEachMonth();
+        res.status(200).send(total);
+    } catch (error) {
+        res.status(500).send({"message":"Lỗi server"})
+    }
+});
+
+
 module.exports = Router;

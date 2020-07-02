@@ -59,11 +59,33 @@ async function getTotalRevenue(idCourse){
     }
 }
 
+async function getTotalRevenueEachMonth(){
+    try {
+        let total = await orderSchema.aggregate([
+            {
+                $group:{
+                    _id:{
+                        month: '$created_at'
+                    },
+                    "Total":{
+                        $sum:"$amount"
+                    }
+                }
+            }
+        ]);
+        return total;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
+
 
 
 module.exports = {
     createOrder:createOrder,
     getListCourseOrdered:getListCourseOrdered,
     getOrderByIdUserAndIdCourse:getOrderByIdUserAndIdCourse,
-    getTotalRevenue:getTotalRevenue
+    getTotalRevenue:getTotalRevenue,
+    getTotalRevenueEachMonth:getTotalRevenueEachMonth,
 }

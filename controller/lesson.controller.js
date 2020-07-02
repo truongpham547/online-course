@@ -22,7 +22,6 @@ function createLesson(docs,video,data){
 
 async function addProgressToEachLesson(idCourse,idUser,lessons){
     var joinDetail = await joinSchema.findOne({idUser:idUser,idCourse:idCourse});
-    // console.log("asdasd",lessons);
     if(joinDetail){
         console.log("join course");
         var lessonProgress = await lessonProgressSchema.find({idJoin:joinDetail._id});
@@ -33,7 +32,7 @@ async function addProgressToEachLesson(idCourse,idUser,lessons){
                 console.log(lesson._id,"-asdsadasd-",lessonProgress[i].idLesson,"----",(lesson._id.equals(lessonProgress[i].idLesson)  && lessonProgress[i].isCompleted==1));
                 if(lesson._id.equals(lessonProgress[i].idLesson) && lessonProgress[i].isCompleted==1){
                     console.log("equal");
-                    newLesson[index]["isComplete"]=1;
+                    newLesson[index]["isCompleted"]=true;
                 }
             })
         }
