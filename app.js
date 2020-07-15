@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
       
     };
 
-    var result= await axios.get("http://localhost:8000/predict-comment/?comment="+removeAccents(data.content));
+    var result= await axios.get("http://localhost:8000/predict-comment/"+removeAccents(data.content));
     console.log(result.data);
 
     if(result.data.result>0.5){

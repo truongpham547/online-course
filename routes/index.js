@@ -19,6 +19,7 @@ Router.use('/order',require("./order/order.router"));
 Router.use('/rate',require("./rate/rate.router"));
 Router.use('/',require('./user/index.router.js'));
 Router.use('/',require('./authenticate/authenticate.js'));
+Router.use('/cay-canh',require('./cayCanhAPI/cayCanh.router'));
 
 
 
