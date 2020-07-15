@@ -6,6 +6,7 @@ const stripe = require('stripe')(PRIVATE_KEY_PAYMENT);
 const courseController = require("../../controller/course.controller");
 const orderController = require("../../controller/order.controller");
 const joinController = require("../../controller/join.controller");
+const { token } = require("morgan");
 
 
 Router.get("/get-payment-public-key",async(req,res,next)=>{
@@ -29,6 +30,14 @@ Router.get("/secret", async(req,res,next)=>{
 });
 
 Router.post("/pay", async (req, res) => {
+    // var a = {
+    //     token:token,
+    //     cart:[
+    //         {_id:"sadasdasd21ad"},
+    //         {_id:"sadasdasd21ad"},
+    //     ],
+    //     idUser:"adasdada3453sadasd"
+    // }
     try {
 
         var totalAmount=0;
