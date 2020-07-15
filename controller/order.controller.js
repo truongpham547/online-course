@@ -53,7 +53,11 @@ async function getTotalRevenue(idCourse){
                 }
             }
         ]);
-        return total;
+        // return total[0];
+        if(total[0].Total==""){
+            return {"Total":0}
+        }
+        return {"Total":total[0].Total}
     }catch(err){
         throw new Error(err);
     }

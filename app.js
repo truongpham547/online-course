@@ -84,7 +84,8 @@ io.on('connection', (socket) => {
     console.log(result.data);
 
     if(result.data.result>0.5){
-      socket.emit('not valid',{
+      console.log("vo van hoa");
+      io.emit('notvalid',{
         message:"vo van hoa"
       });
     }else{

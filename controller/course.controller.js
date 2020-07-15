@@ -203,7 +203,7 @@ async function getCourseByArrayId(ids){
     let arr=[]
     for(let i=0;i<ids.length;i++){
       tmp++;
-      arr.push(await (await course.findOne({'_id':ids[i]})).populated("idUser",["name"],"users"));
+      arr.push(await course.findOne({'_id':ids[i]}).populate("idUser",["name"],"users"));
       if(tmp>4){
         break;
       }
