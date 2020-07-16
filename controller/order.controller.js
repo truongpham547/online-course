@@ -54,6 +54,10 @@ async function getTotalRevenue(idCourse){
             }
         ]);
         // return total[0];
+        console.log(total);
+        if(total==[]){
+            return {"Total":0}
+        }
         if(total[0].Total==""){
             return {"Total":0}
         }

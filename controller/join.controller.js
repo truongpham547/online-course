@@ -112,7 +112,7 @@ async function updateProgressLesson(idUser,idCourse,idLesson,data){
 
         }else{
             try {
-                let updated =await lessonProgressSchema.findOneAndUpdate({idJoin:joinInfo._id,idLesson:idLesson},{isCompleted:data.isCompleted},{new:true});
+                let updated =await lessonProgressSchema.findOneAndUpdate({idJoin:joinInfo._id,idLesson:idLesson},{isCompleted:1},{new:true});
                 let courseUpdated = await updatePercentCourse(idCourse,joinInfo._id);
                 return courseUpdated;
             } catch (error) {
