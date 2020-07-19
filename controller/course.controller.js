@@ -116,6 +116,7 @@ function deleteCourse(id, iduser) {
 }
 
 function updateCourse(data) {
+  console.log(data);
   return new Promise((resolve, reject) => {
     try {
       courseModel
