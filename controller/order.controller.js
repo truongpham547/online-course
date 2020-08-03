@@ -12,6 +12,7 @@ async function createOrder(reqData) {
         let newOrder = await order.save();
         return newOrder;
     } catch (error) {
+        console.log(error);
         throw new Error(error);
     }
 }
