@@ -13,9 +13,9 @@ module.exports = function(req, res, next) {
       if (!user) {
         return resolve(null);
       }
-      if(user.active!=1){
+     /*  if(user.active!=1){
         return resolve(null);
-      }
+      } */
       // Match password
       bcrypt.compare(password, user.password, (err, isMatch) => {
         if (err) {
